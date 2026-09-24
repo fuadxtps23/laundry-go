@@ -28,7 +28,14 @@ it('renders one neutral login page for all roles', function (): void {
         ->assertOk()
         ->assertSee('Masuk ke Laundry Go')
         ->assertSee('Gunakan username atau email yang terdaftar.')
-        ->assertSee('Daftar Sekarang');
+        ->assertSee('Daftar Sekarang')
+        ->assertSee('href="'.route('register').'"', false)
+        ->assertDontSee('&lt;a class="font-semibold text-brand-600', false);
+
+    $this->get('/register')
+        ->assertOk()
+        ->assertSee('href="'.route('login').'"', false)
+        ->assertDontSee('&lt;a class="font-semibold text-brand-600', false);
 });
 
 it('registers and logs in a customer using username credentials', function (): void {

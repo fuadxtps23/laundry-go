@@ -3,7 +3,10 @@
 @section('title', 'Masuk')
 @section('eyebrow', 'Selamat datang kembali')
 @section('headline', 'Cuci 😌, kami yang handalkan.')
-@section('footer', 'Belum punya akun? <a class="font-semibold text-brand-600 hover:text-brand-700" href="'.route('register').'">Daftar Sekarang</a>')
+@section('footer')
+    Belum punya akun?
+    <a class="font-semibold text-brand-600 hover:text-brand-700" href="{{ route('register') }}">Daftar Sekarang</a>
+@endsection
 
 @section('form')
     <div class="mb-7">
