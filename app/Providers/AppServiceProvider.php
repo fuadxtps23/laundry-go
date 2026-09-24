@@ -17,15 +17,7 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        RateLimiter::for('customer-login', function (Request $request): Limit {
-            return Limit::perMinute(5)->by(Str::lower((string) $request->input('login')).'|'.$request->ip());
-        });
-
-        RateLimiter::for('karyawan-login', function (Request $request): Limit {
-            return Limit::perMinute(5)->by(Str::lower((string) $request->input('login')).'|'.$request->ip());
-        });
-
-        RateLimiter::for('admin-login', function (Request $request): Limit {
+        RateLimiter::for('login', function (Request $request): Limit {
             return Limit::perMinute(5)->by(Str::lower((string) $request->input('login')).'|'.$request->ip());
         });
 

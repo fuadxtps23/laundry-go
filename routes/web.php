@@ -1,9 +1,8 @@
 <?php
 
 use App\Http\Controllers\Admin\EmployeeController;
-use App\Http\Controllers\Auth\AdminAuthController;
+use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\CustomerAuthController;
-use App\Http\Controllers\Auth\KaryawanAuthController;
 use App\Http\Controllers\Customer\DashboardController as CustomerDashboardController;
 use App\Http\Controllers\Customer\OrderController;
 use App\Http\Controllers\Customer\PageController;
@@ -24,14 +23,20 @@ Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('/beranda', [PageController::class, 'home'])->name('beranda');
 Route::get('/layanan', [PageController::class, 'services'])->name('layanan');
 
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])
+    ->middleware('throttle:login')
+    ->name('login.post');
 Route::middleware('guest:web')->group(function (): void {
-    Route::get('/login', [CustomerAuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [CustomerAuthController::class, 'login'])->middleware('throttle:customer-login')->name('login.store');
     Route::get('/register', [CustomerAuthController::class, 'showRegister'])->name('register');
-    Route::post('/register', [CustomerAuthController::class, 'register'])->middleware('throttle:registration')->name('register.store');
+    Route::post('/register', [CustomerAuthController::class, 'register'])
+        ->middleware('throttle:registration')
+        ->name('register.store');
 });
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::post('/logout', [CustomerAuthController::class, 'logout'])->name('logout');
+Route::redirect('/karyawan/login', '/login');
+Route::redirect('/admin/login', '/login');
 
 Route::middleware('customer')->group(function (): void {
     Route::get('/dashboard', CustomerDashboardController::class)->name('customer.dashboard');
@@ -49,12 +54,6 @@ Route::middleware('customer')->group(function (): void {
 });
 
 Route::prefix('karyawan')->name('karyawan.')->group(function (): void {
-    Route::middleware('guest:karyawan')->group(function (): void {
-        Route::get('/login', [KaryawanAuthController::class, 'showLogin'])->name('login');
-        Route::post('/login', [KaryawanAuthController::class, 'login'])->middleware('throttle:karyawan-login')->name('login.store');
-    });
-    Route::post('/logout', [KaryawanAuthController::class, 'logout'])->name('logout');
-
     Route::middleware('karyawan')->group(function (): void {
         Route::redirect('/', '/karyawan/dashboard')->name('home');
         Route::get('/dashboard', [DashboardController::class, '__invoke'])->name('dashboard');
@@ -78,12 +77,6 @@ Route::prefix('karyawan')->name('karyawan.')->group(function (): void {
 });
 
 Route::prefix('admin')->name('admin.')->group(function (): void {
-    Route::middleware('guest:admin')->group(function (): void {
-        Route::get('/login', [AdminAuthController::class, 'showLogin'])->name('login');
-        Route::post('/login', [AdminAuthController::class, 'login'])->middleware('throttle:admin-login')->name('login.store');
-    });
-    Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
-
     Route::middleware('admin')->group(function (): void {
         Route::redirect('/', '/admin/dashboard')->name('home');
         Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, '__invoke'])->name('dashboard');

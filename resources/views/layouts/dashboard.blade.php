@@ -54,7 +54,7 @@
                     <span class="flex h-9 w-9 items-center justify-center rounded-full bg-brand-500 text-sm font-bold text-white">{{ strtoupper(substr($staffUser->nama_lengkap ?? 'U', 0, 1)) }}</span>
                     <span class="min-w-0 flex-1"><span class="block truncate text-sm font-semibold">{{ $staffUser->nama_lengkap ?? 'Pengguna' }}</span><span class="block truncate text-xs text-brand-200/60">Lihat profil</span></span>
                 </a>
-                <form method="POST" action="{{ route($role.'.logout') }}" class="mt-2">@csrf<button class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-semibold text-brand-100/60 hover:bg-white/10 hover:text-white">↪ <span>Keluar</span></button></form>
+                <form method="POST" action="{{ route('logout') }}" class="mt-2">@csrf<button class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-semibold text-brand-100/60 hover:bg-white/10 hover:text-white">↪ <span>Keluar</span></button></form>
             </div>
         </div>
     </aside>

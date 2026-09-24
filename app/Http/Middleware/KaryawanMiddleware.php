@@ -20,8 +20,8 @@ class KaryawanMiddleware
                 $guard->logout();
             }
 
-            return redirect()->guest(route('karyawan.login'))
-                ->with('error', 'Silakan masuk sebagai karyawan untuk mengakses area ini.');
+            return redirect()->guest(route('login'))
+                ->with('error', 'Silakan login menggunakan akun karyawan.');
         }
 
         Auth::shouldUse('karyawan');

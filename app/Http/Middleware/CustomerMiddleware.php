@@ -21,7 +21,7 @@ class CustomerMiddleware
             }
 
             return redirect()->guest(route('login'))
-                ->with('error', 'Silakan masuk sebagai pelanggan untuk mengakses area ini.');
+                ->with('error', 'Silakan login menggunakan akun pelanggan.');
         }
 
         Auth::shouldUse('web');

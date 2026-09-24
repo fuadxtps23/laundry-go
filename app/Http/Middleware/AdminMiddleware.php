@@ -20,8 +20,8 @@ class AdminMiddleware
                 $guard->logout();
             }
 
-            return redirect()->guest(route('admin.login'))
-                ->with('error', 'Silakan masuk sebagai admin untuk mengakses area ini.');
+            return redirect()->guest(route('login'))
+                ->with('error', 'Silakan login menggunakan akun admin.');
         }
 
         Auth::shouldUse('admin');

@@ -5,6 +5,7 @@ Aplikasi laundry berbasis **Laravel 13 + MySQL** dengan area Customer, Karyawan,
 ## Fitur
 
 - Multi-guard authentication: `web` (Customer), `karyawan`, dan `admin`.
+- Login terpadu di `/login` dengan deteksi role otomatis; URL lama `/admin/login` dan `/karyawan/login` tetap redirect ke `/login`.
 - Role middleware untuk memisahkan URL `/`, `/karyawan/*`, dan `/admin/*`.
 - Katalog layanan, pesan laundry, kalkulasi harga otomatis, dan kode transaksi `LG-XXXX`.
 - Upload bukti pembayaran ke `storage/app/public/bukti_pembayaran` dengan validasi JPG/JPEG/PNG/PDF maksimal 2 MB.
@@ -44,8 +45,8 @@ Buka `http://localhost:8000`. Untuk development frontend, gunakan `npm run dev` 
 
 | Role | URL | Username | Password |
 | --- | --- | --- | --- |
-| Admin | `/admin/login` | `admin` | `admin123` |
-| Karyawan | `/karyawan/login` | dibuat oleh Admin | dibuat oleh Admin |
+| Admin | `/login` | `admin` | `admin123` |
+| Karyawan | `/login` | dibuat oleh Admin | dibuat oleh Admin |
 | Customer | `/login` | daftar mandiri | dibuat saat register |
 
 > Ganti password admin sebelum digunakan di lingkungan production.

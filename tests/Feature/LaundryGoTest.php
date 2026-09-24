@@ -23,6 +23,14 @@ it('renders the public laundry landing page', function (): void {
         ->assertSee('Cuci Komplit');
 });
 
+it('renders one neutral login page for all roles', function (): void {
+    $this->get('/login')
+        ->assertOk()
+        ->assertSee('Masuk ke Laundry Go')
+        ->assertSee('Gunakan username atau email yang terdaftar.')
+        ->assertSee('Daftar Sekarang');
+});
+
 it('registers and logs in a customer using username credentials', function (): void {
     $this->post('/register', [
         'nama_lengkap' => 'Customer Baru',
@@ -43,12 +51,51 @@ it('registers and logs in a customer using username credentials', function (): v
     ])->assertRedirect(route('customer.dashboard'));
 });
 
-it('redirects each role to its own login area', function (): void {
+it('redirects protected areas to the unified login page', function (): void {
     $customer = User::factory()->create();
     $employee = Karyawan::factory()->create();
 
-    $this->actingAs($customer, 'web')->get('/karyawan/dashboard')->assertRedirect(route('karyawan.login'));
-    $this->actingAs($employee, 'karyawan')->get('/admin/dashboard')->assertRedirect(route('admin.login'));
+    $this->actingAs($customer, 'web')->get('/karyawan/dashboard')->assertRedirect(route('login'));
+    $this->actingAs($employee, 'karyawan')->get('/admin/dashboard')->assertRedirect(route('login'));
+});
+
+it('redirects legacy staff login URLs to the unified login page', function (): void {
+    $this->get('/karyawan/login')->assertRedirect('/login');
+    $this->get('/admin/login')->assertRedirect('/login');
+});
+
+it('logs each role through the unified login page', function (): void {
+    $admin = Admin::factory()->create([
+        'username' => 'admin_unified',
+        'password' => 'admin123',
+    ]);
+    $employee = Karyawan::factory()->create([
+        'username' => 'karyawan_unified',
+        'password' => 'karyawan123',
+    ]);
+    $customer = User::factory()->create([
+        'username' => 'customer_unified',
+        'password' => 'customer123',
+    ]);
+
+    $this->post('/login', ['login' => $admin->username, 'password' => 'admin123'])
+        ->assertRedirect(route('admin.dashboard'));
+    $this->assertAuthenticatedAs($admin, 'admin');
+    $this->post('/logout')->assertRedirect(route('login'));
+
+    $this->post('/login', ['login' => $employee->username, 'password' => 'karyawan123'])
+        ->assertRedirect(route('karyawan.dashboard'));
+    $this->assertAuthenticatedAs($employee, 'karyawan');
+    $this->post('/logout')->assertRedirect(route('login'));
+
+    $this->post('/login', ['login' => $customer->username, 'password' => 'customer123'])
+        ->assertRedirect(route('customer.dashboard'));
+    $this->assertAuthenticatedAs($customer, 'web');
+});
+
+it('shows the unified login error for invalid credentials', function (): void {
+    $this->post('/login', ['login' => 'tidak-ada', 'password' => 'salah'])
+        ->assertSessionHasErrors(['login' => 'Username/email atau password salah.']);
 });
 
 it('updates a customer profile and password', function (): void {
@@ -245,7 +292,7 @@ it('logs an admin into the admin guard and renders the dashboard', function (): 
         'password' => 'admin123',
     ]);
 
-    $this->post('/admin/login', ['login' => 'admin', 'password' => 'admin123'])
+    $this->post('/login', ['login' => $admin->email, 'password' => 'admin123'])
         ->assertRedirect(route('admin.dashboard'));
 
     $this->assertAuthenticatedAs($admin, 'admin');
