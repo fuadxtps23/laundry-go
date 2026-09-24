@@ -1,0 +1,29 @@
+<?php $__env->startSection('title', 'Pembayaran'); ?>
+<?php $__env->startSection('header', 'Pembayaran'); ?>
+
+<?php $__env->startSection('content'); ?>
+<div class="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end"><div><h1 class="page-title">Data pembayaran</h1><p class="page-subtitle">Verifikasi bukti pembayaran pelanggan.</p></div><div class="rounded-xl bg-brand-50 px-4 py-3 text-sm font-semibold text-brand-700">Total data: <?php echo e($payments->total()); ?></div></div>
+<form method="GET" action="<?php echo e(route($role.'.payments.index')); ?>" class="card mb-6 grid gap-3 p-4 sm:grid-cols-3"><div><label class="form-label" for="search">Cari</label><input id="search" name="search" value="<?php echo e($search); ?>" class="form-input" placeholder="Kode atau nama pelanggan"></div><div><label class="form-label" for="status">Status</label><select id="status" name="status" class="form-input"><option value="">Semua status</option><?php $__currentLoopData = \App\Enums\PaymentStatus::cases(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><option value="<?php echo e($item->value); ?>" <?php if($status === $item->value): echo 'selected'; endif; ?>><?php echo e($item->label()); ?></option><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?></select></div><div class="flex items-end"><button class="btn-primary w-full">Terapkan</button></div></form>
+<div class="card table-wrap"><table class="data-table"><thead><tr><th>ID</th><th>Kode transaksi</th><th>Pelanggan</th><th>Total tagihan</th><th>Jumlah bayar</th><th>Metode</th><th>Bukti</th><th>Tanggal</th><th>Status</th><th>Aksi</th></tr></thead><tbody><?php $__empty_1 = true; $__currentLoopData = $payments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $payment): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?><tr><td class="font-semibold text-slate-500">#<?php echo e($payment->id); ?></td><td class="font-semibold text-brand-700"><?php echo e($payment->transaction->kode_transaksi); ?></td><td><?php echo e($payment->transaction->user->nama_lengkap); ?></td><td>Rp<?php echo e(number_format((float) $payment->transaction->total_harga, 0, ',', '.')); ?></td><td class="font-semibold text-slate-800">Rp<?php echo e(number_format((float) $payment->jumlah_bayar, 0, ',', '.')); ?></td><td><?php echo e($payment->metode->label()); ?></td><td><?php if($payment->bukti_pembayaran): ?><div class="flex items-center gap-2"><a href="<?php echo e(Storage::disk('public')->url($payment->bukti_pembayaran)); ?>" target="_blank" class="font-semibold text-brand-600">Preview</a><?php if(in_array(pathinfo($payment->bukti_pembayaran, PATHINFO_EXTENSION), ['jpg', 'jpeg', 'png', 'webp'], true)): ?><img src="<?php echo e(Storage::disk('public')->url($payment->bukti_pembayaran)); ?>" alt="Bukti pembayaran" class="h-10 w-10 rounded-lg object-cover ring-1 ring-slate-200"><?php endif; ?></div><?php else: ?><span class="text-slate-400">—</span><?php endif; ?></td><td><?php echo e($payment->tanggal_bayar?->format('d M Y, H:i') ?? '—'); ?></td><td><?php if (isset($component)) { $__componentOriginal8c81617a70e11bcf247c4db924ab1b62 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal8c81617a70e11bcf247c4db924ab1b62 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.status-badge','data' => ['status' => $payment->status]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('status-badge'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['status' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($payment->status)]); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal8c81617a70e11bcf247c4db924ab1b62)): ?>
+<?php $attributes = $__attributesOriginal8c81617a70e11bcf247c4db924ab1b62; ?>
+<?php unset($__attributesOriginal8c81617a70e11bcf247c4db924ab1b62); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal8c81617a70e11bcf247c4db924ab1b62)): ?>
+<?php $component = $__componentOriginal8c81617a70e11bcf247c4db924ab1b62; ?>
+<?php unset($__componentOriginal8c81617a70e11bcf247c4db924ab1b62); ?>
+<?php endif; ?></td><td><?php if($payment->status === \App\Enums\PaymentStatus::MenungguVerifikasi): ?><form method="POST" action="<?php echo e(route($role.'.payments.verify', $payment)); ?>"><?php echo csrf_field(); ?><button class="font-semibold text-emerald-600">Verifikasi</button></form><?php else: ?><span class="text-xs text-slate-400">Selesai</span><?php endif; ?></td></tr><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?><tr><td colspan="10" class="py-14 text-center text-slate-400">Data pembayaran tidak ditemukan.</td></tr><?php endif; ?></tbody></table></div><?php if($payments->hasPages()): ?><div class="mt-5"><?php echo e($payments->links()); ?></div><?php endif; ?>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.dashboard', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /home/notfuad/ngodingweb/www/laundry-go/resources/views/staff/payments/index.blade.php ENDPATH**/ ?>
