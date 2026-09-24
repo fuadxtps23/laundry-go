@@ -1,9 +1,102 @@
 @import 'tailwindcss';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../resources/views/**/*.blade.php';
 @source '../../storage/framework/views/*.php';
 
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    --color-brand-50: #fff8eb;
+    --color-brand-100: #ffedc7;
+    --color-brand-200: #ffda8a;
+    --color-brand-300: #ffc451;
+    --color-brand-400: #f5a623;
+    --color-brand-500: #f59e0b;
+    --color-brand-600: #d97706;
+    --color-brand-700: #a65308;
+    --color-brand-800: #7c3e08;
+    --color-brand-900: #3b1f0c;
+}
+
+:root {
+    color-scheme: light;
+}
+
+body {
+    @apply bg-slate-50 text-slate-900 antialiased;
+}
+
+.btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-brand-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60;
+}
+
+.btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-brand-300 hover:bg-brand-50 focus:outline-none focus:ring-2 focus:ring-brand-300;
+}
+
+.btn-danger {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400;
+}
+
+.form-input {
+    @apply block w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-brand-400 focus:ring-4 focus:ring-brand-100;
+}
+
+.form-label {
+    @apply mb-1.5 block text-sm font-semibold text-slate-700;
+}
+
+.form-error {
+    @apply mt-1.5 text-xs font-medium text-red-600;
+}
+
+.card {
+    @apply rounded-2xl border border-slate-200/80 bg-white shadow-sm;
+}
+
+.table-wrap {
+    @apply overflow-x-auto;
+}
+
+.data-table {
+    @apply min-w-full divide-y divide-slate-200 text-left text-sm;
+}
+
+.data-table thead {
+    @apply bg-slate-50 text-xs uppercase tracking-wide text-slate-500;
+}
+
+.data-table th {
+    @apply whitespace-nowrap px-5 py-3 font-semibold;
+}
+
+.data-table td {
+    @apply whitespace-nowrap px-5 py-4 text-slate-600;
+}
+
+.data-table tbody {
+    @apply divide-y divide-slate-100 bg-white;
+}
+
+.data-table tbody tr {
+    @apply transition hover:bg-brand-50/40;
+}
+
+.page-title {
+    @apply text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl;
+}
+
+.page-subtitle {
+    @apply mt-1 text-sm text-slate-500;
+}
+
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    body {
+        background: white;
+    }
 }

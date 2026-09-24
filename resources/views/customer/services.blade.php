@@ -1,0 +1,8 @@
+@extends('layouts.app')
+
+@section('title', 'Layanan')
+
+@section('content')
+<section class="bg-brand-900 py-14 text-white"><div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"><p class="text-sm font-bold uppercase tracking-[0.2em] text-brand-300">Katalog laundry</p><h1 class="mt-3 text-4xl font-bold tracking-tight">Layanan yang pas untuk Anda.</h1><p class="mt-3 max-w-xl text-brand-100/75">Harga transparan, estimasi jelas, dan hasil dikerjakan oleh tim berpengalaman.</p></div></section>
+<section class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8"><div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">@forelse ($layanan as $service)<div class="card flex flex-col p-6"><div class="flex items-start justify-between gap-3"><span class="rounded-xl bg-brand-100 p-3 text-xl text-brand-700">✦</span><span class="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">Aktif</span></div><h2 class="mt-5 text-lg font-bold text-brand-900">{{ $service->nama_layanan }}</h2><p class="mt-2 min-h-12 text-sm leading-6 text-slate-500">{{ $service->deskripsi }}</p><div class="mt-6 border-t border-slate-100 pt-4"><p class="text-2xl font-bold text-brand-600">Rp{{ number_format((float) $service->harga_per_kg, 0, ',', '.') }}<span class="text-sm font-medium text-slate-400">/{{ $service->satuan }}</span></p><p class="mt-2 text-xs text-slate-500">Estimasi selesai {{ $service->estimasi_hari }} hari kerja</p></div><a href="{{ auth('web')->check() ? route('customer.orders.create') : route('login') }}" class="btn-secondary mt-5 w-full">Pesan layanan ini</a></div>@empty<div class="col-span-full rounded-2xl border border-dashed border-slate-300 p-10 text-center text-slate-500">Belum ada layanan aktif.</div>@endforelse</div></section>
+@endsection

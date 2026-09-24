@@ -1,2 +1,4 @@
 *
 !.gitignore
+!bukti_pembayaran/
+!bukti_pembayaran/.gitignore

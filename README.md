@@ -1,58 +1,88 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Laundry Go
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi laundry berbasis **Laravel 13 + MySQL** dengan area Customer, Karyawan, dan Admin. Frontend menggunakan Blade, Tailwind CSS v4, dan Vite.
 
-## About Laravel
+## Fitur
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Multi-guard authentication: `web` (Customer), `karyawan`, dan `admin`.
+- Role middleware untuk memisahkan URL `/`, `/karyawan/*`, dan `/admin/*`.
+- Katalog layanan, pesan laundry, kalkulasi harga otomatis, dan kode transaksi `LG-XXXX`.
+- Upload bukti pembayaran ke `storage/app/public/bukti_pembayaran` dengan validasi JPG/JPEG/PNG/PDF maksimal 2 MB.
+- Alur status laundry `menunggu → diproses → selesai → diambil` (tidak dapat dibalik).
+- Alur pembayaran `belum_dibayar → menunggu_verifikasi → lunas`.
+- Verifikasi pembayaran, assign karyawan, CRUD pelanggan/layanan/karyawan, rating, laporan, export CSV, dan export PDF.
+- Seeder admin default dan enam layanan awal.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Kebutuhan
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP 8.4.1+ (rekomendasi PHP 8.5)
+- Composer
+- Node.js + npm
+- MySQL 8+
 
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Setup
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+composer install
+cp .env.example .env
+php artisan key:generate
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Atur koneksi database di `.env`, lalu jalankan:
 
-## Contributing
+```bash
+php artisan migrate --seed
+php artisan storage:link
+npm install
+npm run build
+php artisan serve
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Buka `http://localhost:8000`. Untuk development frontend, gunakan `npm run dev` (atau `composer run dev`).
 
-## Code of Conduct
+### Login default
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+| Role | URL | Username | Password |
+| --- | --- | --- | --- |
+| Admin | `/admin/login` | `admin` | `admin123` |
+| Karyawan | `/karyawan/login` | dibuat oleh Admin | dibuat oleh Admin |
+| Customer | `/login` | daftar mandiri | dibuat saat register |
 
-## Security Vulnerabilities
+> Ganti password admin sebelum digunakan di lingkungan production.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Seed dan Factory
 
-## License
+`DatabaseSeeder` membuat admin default, sequence transaksi, dan layanan:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- Cuci Komplit — Rp18.000/kg, 1 hari
+- Setrika Saja — Rp9.000/kg, 1 hari
+- Cuci Kering Lipat — Rp12.000/kg, 2 hari
+- Cuci Sepatu — Rp35.000/pasang, 2 hari
+- Cuci Karpet — Rp25.000/m², 3 hari
+- Bed Cover & Selimut — Rp40.000/potong, 2 hari
+
+Model memiliki factory untuk seluruh tabel domain. Seeder dapat dijalankan ulang dengan:
+
+```bash
+php artisan db:seed
+```
+
+## Pengujian
+
+Test suite menggunakan Pest dan database SQLite in-memory:
+
+```bash
+php artisan test --compact
+```
+
+## Struktur penting
+
+- `app/Models` — model Eloquent dan relasi.
+- `app/Enums` — status laundry, pembayaran, dan metode pembayaran.
+- `app/Http/Middleware` — middleware role Customer/Karyawan/Admin.
+- `app/Http/Controllers/Customer` — area pelanggan.
+- `app/Http/Controllers/Staff` — implementasi controller operasional yang dipakai kedua area.
+- `app/Http/Controllers/Admin` dan `app/Http/Controllers/Karyawan` — controller per area.
+- `app/Http/Requests` — validasi server-side seluruh form utama.
+- `resources/views` — layout, komponen, halaman Customer, dan halaman operasional.
+- `database/migrations` — schema users, karyawan, admins, layanan, transaksi, pembayaran, rating, dan sequence kode.
