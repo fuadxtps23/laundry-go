@@ -2,6 +2,7 @@
 <?php $__env->startSection('header', 'Tambah karyawan'); ?>
 
 <?php $__env->startSection('content'); ?>
+<?php ($selectedPosition = old('posisi_jabatan', '')); ?>
 <div class="mb-8"><a href="<?php echo e(route('admin.karyawan.index')); ?>" class="text-sm font-semibold text-brand-600">← Kembali ke karyawan</a><h1 class="page-title mt-3">Buat akun karyawan</h1><p class="page-subtitle">Karyawan dapat masuk ke area operasional setelah akun dibuat.</p></div><form method="POST" action="<?php echo e(route('admin.karyawan.store')); ?>" class="max-w-3xl"><?php echo csrf_field(); ?><div class="card p-6 sm:p-8"><div class="grid gap-5 sm:grid-cols-2"><div class="sm:col-span-2"><label class="form-label" for="nama_lengkap">Nama lengkap</label><input id="nama_lengkap" name="nama_lengkap" value="<?php echo e(old('nama_lengkap')); ?>" class="form-input" required><?php $__errorArgs = ['nama_lengkap'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -30,7 +31,7 @@ if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?><p class="form-error"><?php echo e($message); ?></p><?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
-unset($__errorArgs, $__bag); ?></div><div><label class="form-label" for="posisi_jabatan">Posisi/jabatan</label><input id="posisi_jabatan" name="posisi_jabatan" value="<?php echo e(old('posisi_jabatan')); ?>" class="form-input" placeholder="Contoh: Operator" required><?php $__errorArgs = ['posisi_jabatan'];
+unset($__errorArgs, $__bag); ?></div><div><label class="form-label" for="posisi_jabatan">Posisi/jabatan</label><select id="posisi_jabatan" name="posisi_jabatan" class="form-input" required><option value="" disabled <?php if($selectedPosition === ''): echo 'selected'; endif; ?>>Pilih posisi/jabatan</option><?php $__currentLoopData = \App\Models\Karyawan::POSITIONS; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $position): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><option value="<?php echo e($position); ?>" <?php if($selectedPosition === $position): echo 'selected'; endif; ?>><?php echo e($position); ?></option><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?></select><?php $__errorArgs = ['posisi_jabatan'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }

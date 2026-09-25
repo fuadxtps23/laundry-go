@@ -23,7 +23,7 @@ class KaryawanRequest extends FormRequest
             'username' => ['required', 'string', 'max:100', 'regex:/^[a-z0-9._-]+$/i', Rule::unique('karyawan', 'username')->ignore($employee instanceof Karyawan ? $employee->id : null)],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique('karyawan', 'email')->ignore($employee instanceof Karyawan ? $employee->id : null)],
             'no_hp' => ['required', 'string', 'max:30', 'regex:/^[0-9+() -]+$/', Rule::unique('karyawan', 'no_hp')->ignore($employee instanceof Karyawan ? $employee->id : null)],
-            'posisi_jabatan' => ['required', 'string', 'max:255'],
+            'posisi_jabatan' => 'required|in:Operator Cuci,Operator Setrika,Operator Packing,Operator Cuci & Lipat,Kurir,Kasir,Supervisor',
             'password' => [$this->isMethod('post') ? 'required' : 'nullable', 'confirmed', Password::min(8)],
         ];
     }

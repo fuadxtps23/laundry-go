@@ -30,11 +30,24 @@ it('renders one neutral login page for all roles', function (): void {
         ->assertSee('Gunakan username atau email yang terdaftar.')
         ->assertSee('Daftar Sekarang')
         ->assertSee('href="'.route('register').'"', false)
+        ->assertSee('autocomplete="on"', false)
+        ->assertSee('name="login"', false)
+        ->assertSee('id="login"', false)
+        ->assertSee('autocomplete="username"', false)
+        ->assertSee('placeholder="Username atau email"', false)
+        ->assertSee('autocomplete="current-password"', false)
         ->assertDontSee('&lt;a class="font-semibold text-brand-600', false);
 
     $this->get('/register')
         ->assertOk()
         ->assertSee('href="'.route('login').'"', false)
+        ->assertSee('autocomplete="on"', false)
+        ->assertSee('autocomplete="name"', false)
+        ->assertSee('autocomplete="username"', false)
+        ->assertSee('autocomplete="email"', false)
+        ->assertSee('autocomplete="tel"', false)
+        ->assertSee('autocomplete="street-address"', false)
+        ->assertSee('autocomplete="new-password"', false)
         ->assertDontSee('&lt;a class="font-semibold text-brand-600', false);
 });
 
@@ -291,6 +304,52 @@ it('exports a report as a PDF for a staff member', function (): void {
         ->get(route('karyawan.reports.export'))
         ->assertOk()
         ->assertHeader('content-type', 'application/pdf');
+});
+
+it('renders allowed employee positions and validates the selection', function (): void {
+    $admin = Admin::factory()->create();
+    $employee = Karyawan::factory()->create([
+        'posisi_jabatan' => 'Supervisor',
+    ]);
+
+    $this->actingAs($admin, 'admin');
+
+    $this->get(route('admin.karyawan.create'))
+        ->assertOk()
+        ->assertSee('<select id="posisi_jabatan"', false)
+        ->assertSee('value="Operator Cuci"', false)
+        ->assertSee('value="Operator Setrika"', false)
+        ->assertSee('value="Operator Packing"', false)
+        ->assertSee('value="Operator Cuci &amp; Lipat"', false)
+        ->assertSee('value="Kurir"', false)
+        ->assertSee('value="Kasir"', false)
+        ->assertSee('value="Supervisor"', false);
+
+    $editResponse = $this->get(route('admin.karyawan.edit', $employee))->assertOk();
+    expect($editResponse->getContent())->toMatch('/<option value="Supervisor"[^>]*selected/');
+
+    $this->post(route('admin.karyawan.store'), [
+        'nama_lengkap' => 'Karyawan Valid',
+        'username' => 'karyawan_valid',
+        'email' => 'karyawan.valid@example.com',
+        'no_hp' => '081200000001',
+        'posisi_jabatan' => 'Kurir',
+        'password' => 'password123',
+        'password_confirmation' => 'password123',
+    ])->assertRedirect(route('admin.karyawan.index'));
+
+    $this->post(route('admin.karyawan.store'), [
+        'nama_lengkap' => 'Karyawan Invalid',
+        'username' => 'karyawan_invalid',
+        'email' => 'karyawan.invalid@example.com',
+        'no_hp' => '081200000002',
+        'posisi_jabatan' => 'Manager',
+        'password' => 'password123',
+        'password_confirmation' => 'password123',
+    ])->assertSessionHasErrors('posisi_jabatan');
+
+    expect(Karyawan::query()->where('username', 'karyawan_valid')->exists())->toBeTrue();
+    expect(Karyawan::query()->where('username', 'karyawan_invalid')->doesntExist())->toBeTrue();
 });
 
 it('logs an admin into the admin guard and renders the dashboard', function (): void {

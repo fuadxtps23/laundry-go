@@ -19,7 +19,7 @@ class KaryawanFactory extends Factory
             'username' => fake()->unique()->userName(),
             'email' => fake()->unique()->safeEmail(),
             'no_hp' => '08'.fake()->unique()->numerify('##########'),
-            'posisi_jabatan' => fake()->randomElement(['Operator', 'Kasir', 'Supervisor']),
+            'posisi_jabatan' => fake()->randomElement(Karyawan::POSITIONS),
             'password' => static::$password ??= Hash::make('password'),
             'role' => Karyawan::ROLE_KARYAWAN,
             'remember_token' => Str::random(10),

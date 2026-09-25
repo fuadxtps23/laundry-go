@@ -15,6 +15,17 @@ class Karyawan extends Authenticatable
 
     public const ROLE_KARYAWAN = 'karyawan';
 
+    /** @var list<string> */
+    public const POSITIONS = [
+        'Operator Cuci',
+        'Operator Setrika',
+        'Operator Packing',
+        'Operator Cuci & Lipat',
+        'Kurir',
+        'Kasir',
+        'Supervisor',
+    ];
+
     protected $table = 'karyawan';
 
     protected $fillable = [
